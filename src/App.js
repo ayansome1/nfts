@@ -39,12 +39,26 @@ function App() {
       console.log(address); // address of deployed contract
       const contract = new web3.eth.Contract(abi, address);
       setContract(contract);
-      const totalSupplyOfTokens = await contract.methods.totalSupply().call(); // TODO: fix
-      setTotalSupply(totalSupplyOfTokens);
-      // Load Colors
-      for (var i = 1; i <= totalSupplyOfTokens; i++) {
-        const color = await contract.methods.colors(i - 1).call();
-        setColors((oldArray) => [...oldArray, color]);
+
+      // const totalSupplyOfTokens = await contract.methods.totalSupply().call(); // TODO: fix this
+      // setTotalSupply(totalSupplyOfTokens);
+      // // Load Colors
+      // for (var i = 1; i <= totalSupplyOfTokens; i++) {
+      //   const color = await contract.methods.colors(i - 1).call();
+      //   setColors((oldArray) => [...oldArray, color]);
+      // }
+      let totalSupplyOfTokens = 0;
+      try {
+        while (true) {
+          const color = await contract.methods
+            .colors(totalSupplyOfTokens)
+            .call();
+          setColors((oldArray) => [...oldArray, color]);
+          totalSupplyOfTokens++;
+        }
+      } catch (e) {
+        console.log('ended');
+        setTotalSupply(totalSupplyOfTokens);
       }
     } else {
       window.alert('Smart contract not deployed to detected network.');
@@ -79,6 +93,9 @@ function App() {
   return (
     <div>
       <b>Issue Token</b> to {account}
+      <hr />
+      Total tokens issued till now: {totalSupply}
+      <hr />
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -94,17 +111,16 @@ function App() {
         />
         <input type='submit' value='MINT' />
       </form>
-      {colors.map((color, key) => {
-        return (
-          <div key={key}>
-            <div className='token' style={{ backgroundColor: color }}>
+      <div>
+        {colors.map((color, key) => {
+          return (
+            <div key={key} className='token' style={{ backgroundColor: color }}>
               {color}
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
       <hr />
-      {totalSupply}
     </div>
   );
 }
