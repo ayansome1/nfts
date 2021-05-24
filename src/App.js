@@ -80,6 +80,9 @@ class App extends Component {
       .balanceOf(this.state.account)
       .call();
     console.log(bal);
+    // let x = await this.state.contract.methods._colorExists(0).call();
+    let x = await this.state.contract.methods.ownerOf(12).call();
+    console.log(x);
   }
 
   constructor(props) {

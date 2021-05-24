@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 contract Color is ERC721, ERC721Enumerable {
 // contract Color is ERC721 {
   string[] public colors;
-  mapping(string => bool) _colorExists;
+  mapping(string => bool) public _colorExists;
 
   constructor() ERC721("Color", "COLOR") {
   }
