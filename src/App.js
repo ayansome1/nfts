@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import './App.css';
 import Color from './abis/Color.json';
+import { useStateWithLabel } from './utils/utils';
 
 function App() {
-  const [account, setAccount] = useState('');
-  const [contract, setContract] = useState(null);
-  const [totalSupply, setTotalSupply] = useState(0);
-  const [colors, setColors] = useState([]);
+  const [account, setAccount] = useStateWithLabel('', 'account');
+  const [contract, setContract] = useStateWithLabel(null, 'contract');
+  const [totalSupply, setTotalSupply] = useStateWithLabel(0, 'totalSupply');
+  const [colors, setColors] = useStateWithLabel([], 'colors');
   let colorValue = null;
 
   const loadWeb3 = async () => {
@@ -35,12 +36,13 @@ function App() {
     if (networkData) {
       const abi = Color.abi;
       const address = networkData.address;
+      console.log(address); // address of deployed contract
       const contract = new web3.eth.Contract(abi, address);
       setContract(contract);
-      const totalSupply = await contract.methods.totalSupply().call();
-      setTotalSupply(totalSupply);
+      const totalSupplyOfTokens = await contract.methods.totalSupply().call(); // TODO: fix
+      setTotalSupply(totalSupplyOfTokens);
       // Load Colors
-      for (var i = 1; i <= totalSupply; i++) {
+      for (var i = 1; i <= totalSupplyOfTokens; i++) {
         const color = await contract.methods.colors(i - 1).call();
         setColors((oldArray) => [...oldArray, color]);
       }
@@ -65,7 +67,7 @@ function App() {
         .once('receipt', (receipt) => {
           setColors((oldArray) => [...oldArray, color]);
         });
-      getTokenBalance();
+      // getTokenBalance();
     }
   }
 
@@ -101,6 +103,8 @@ function App() {
           </div>
         );
       })}
+      <hr />
+      {totalSupply}
     </div>
   );
 }
