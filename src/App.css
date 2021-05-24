@@ -2,5 +2,7 @@
   height: 150px;
   width: 150px;
   border-radius: 50%;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
